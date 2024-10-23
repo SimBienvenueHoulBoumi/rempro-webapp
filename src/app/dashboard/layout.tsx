@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   FaHome,
@@ -18,15 +18,38 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const toggleSidebar = () => {
-    setCollapsed(!collapsed);
+    // Toggle sidebar only if not on mobile
+    if (!isMobile) {
+      setCollapsed(!collapsed);
+    }
   };
 
   const handleLogout = () => {
     console.log("User logged out");
-    window.location.href = "/login";
+    window.location.href = "/login"; // Redirect to login page
   };
+
+  const checkScreenSize = () => {
+    const mobile = window.innerWidth < 768;
+    setIsMobile(mobile);
+    
+    // Close the sidebar if in mobile view
+    if (mobile) {
+      setCollapsed(true);
+    }
+  };
+
+  useEffect(() => {
+    checkScreenSize(); // Check screen size on initial render
+    window.addEventListener("resize", checkScreenSize); // Add resize event listener
+
+    return () => {
+      window.removeEventListener("resize", checkScreenSize); // Cleanup on unmount
+    };
+  }, []);
 
   return (
     <div className="flex h-screen">
@@ -40,7 +63,7 @@ export default function DashboardLayout({
         <ul className="menu space-y-2">
           <li>
             <button className="btn btn-square" onClick={toggleSidebar}>
-              {/* Icon to show the menu */}
+              {/* Icon to toggle the menu */}
               <span className="mx-1">
                 {collapsed ? (
                   <FaChevronRight size={14} />
@@ -58,7 +81,7 @@ export default function DashboardLayout({
           </li>
           <li>
             <Link
-              href="/dashboard/save-progression"
+              href="/dashboard/progression"
               className="flex items-center"
             >
               <FaChartLine size={14} />
