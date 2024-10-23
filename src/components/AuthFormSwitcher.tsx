@@ -13,7 +13,7 @@ const AuthFormSwitcher: React.FC = () => {
   };
 
   return (
-    <div className="hero min-h-screen bg-gradient-to-r from-white to-teal-300 flex items-center justify-center">
+    <div className="hero min-h-screen flex items-center justify-center">
       <div className="hero-content flex flex-col lg:flex-row-reverse w-full lg:w-3/4 space-y-8 lg:space-y-0 lg:space-x-10">
         <HeroSection isLogin={isLogin} toggleForm={toggleForm} />
 
