@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function SaveProgression() {
+export default function page() {
   return (
     <div>save progression page</div>
   );
