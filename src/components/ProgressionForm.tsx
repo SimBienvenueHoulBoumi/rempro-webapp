@@ -9,83 +9,57 @@ export default function ProgressionForm() {
   const [levelType, setLevelType] = useState<string>("MOVIE");
   const [levelNumber, setLevelNumber] = useState<string>("");
   const [episodeNumber, setEpisodeNumber] = useState<string>("");
-  const [createdAt, setCreatedAt] = useState<string>(
-    new Date().toISOString().slice(0, 16)
-  );
-  const [updatedAt, setUpdatedAt] = useState<string>(
-    new Date().toISOString().slice(0, 16)
-  );
 
   const levelTypeOptions = [
-    { value: "MOVIE", label: "Film" },
-    { value: "SHOW", label: "Série" },
-    { value: "DOCUMENTARY", label: "Documentaire" },
+    { value: "MOVIE", label: "Movie" },
+    { value: "SHOW", label: "Show" },
+    { value: "DOCUMENTARY", label: "Documentary" },
   ];
 
   return (
     <form>
-      <h2 className="text-lg font-bold mb-4">Créer un nouvel élément suivi</h2>
+      <h2 className="text-lg font-bold mb-4">Create a New Followed Item</h2>
 
-      {/* Champ pour le nom */}
+      {/* Field for the name */}
       <FormInput
-        label="Nom"
+        label="Name"
         type="text"
-        placeholder="Nom de l'élément suivi"
+        placeholder="Name of the followed item"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
       />
 
-      {/* Champ pour le type de niveau avec un select */}
+      {/* Field for level type with a select */}
       <FormSelect
-        label="Type de niveau"
+        label="Level Type"
         options={levelTypeOptions}
         value={levelType}
         onChange={(e) => setLevelType(e.target.value)}
         required
       />
 
-      {/* Champ pour le numéro du niveau */}
+      {/* Field for level number */}
       <FormInput
-        label="Numéro du niveau"
+        label="Level Number"
         type="number"
-        placeholder="Numéro du niveau"
+        placeholder="Level number"
         value={levelNumber}
         onChange={(e) => setLevelNumber(e.target.value)}
         required
       />
 
-      {/* Champ pour le numéro de l'épisode */}
+      {/* Field for episode number */}
       <FormInput
-        label="Numéro de l'épisode"
+        label="Episode Number"
         type="number"
-        placeholder="Numéro de l'épisode"
+        placeholder="Episode number"
         value={episodeNumber}
         onChange={(e) => setEpisodeNumber(e.target.value)}
         required
       />
 
-      {/* Champ pour la date de création */}
-      <FormInput
-        label="Date de création"
-        type="datetime-local"
-        placeholder="Date de création"
-        value={createdAt}
-        onChange={(e) => setCreatedAt(e.target.value)}
-        required
-      />
-
-      {/* Champ pour la date de mise à jour */}
-      <FormInput
-        label="Date de mise à jour"
-        type="datetime-local"
-        placeholder="Date de mise à jour"
-        value={updatedAt}
-        onChange={(e) => setUpdatedAt(e.target.value)}
-        required
-      />
-
-      {/* Bouton de soumission */}
+      {/* Submit button */}
       <button
         type="submit"
         className="
@@ -99,7 +73,7 @@ export default function ProgressionForm() {
           duration-300
         "
       >
-        Créer
+        Create
       </button>
     </form>
   );
