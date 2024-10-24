@@ -1,32 +1,35 @@
+"use client";
+
 import { useState } from "react";
-import { AuthDto, Token } from "@/types/authenticate";
+import { AuthDto } from "@/types/authenticate";
 import { authenticate } from "@/services/authenticate";
+import { useRouter } from "next/navigation"; // Pour la redirection côté client
 
 interface UseAuthReturn {
   loading: boolean;
   error: string | null;
-  login: (auth: AuthDto) => Promise<Token | null>;
-  register: (auth: AuthDto) => Promise<Token | null>;
+  login: (auth: AuthDto) => Promise<void | null>;
+  register: (auth: AuthDto) => Promise<void | null>;
 }
 
 export function useAuth(): UseAuthReturn {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleAuth = async (
     auth: AuthDto,
     type: "login" | "register"
-  ): Promise<Token | null> => {
+  ): Promise<void> => {
     setLoading(true);
     setError(null);
 
     try {
-      const token = await authenticate(auth, type);
-      return token;
+      await authenticate(auth, type);
+      router.push("/dashboard/home");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "An error occurred");
-      return null;
     } finally {
       setLoading(false);
     }

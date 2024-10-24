@@ -4,14 +4,14 @@ import { useState } from "react";
 import FormInput from "./FormInput";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthDto } from "@/types/authenticate";
-import toast from 'react-hot-toast'; // Importer toast
-// import { useRouter } from "next/router"; // Pour redirection
+import toast from "react-hot-toast"; // Importer toast
+// import { useRouter } from "next/navigation"; // Pour redirection
 
 const LoginForm: React.FC = () => {
   const { loading, login, error } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const router = useRouter(); // Utiliser le router pour rediriger
+  // const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,18 +22,8 @@ const LoginForm: React.FC = () => {
     };
 
     try {
-      const token = await login(authData);
-
-      if (token) {
-        toast.success("Successfully logged in!"); // Toast de succès
-        // Rediriger vers le tableau de bord après la connexion
-        // setTimeout(() => {
-        //   router.push("/dashboard");
-        // }, 2000);
-      } else {
-        toast.error("Login failed. Please check your credentials."); // Toast d'erreur
-      }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      await login(authData);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error("An error occurred during login."); // Toast en cas d'erreur
     }

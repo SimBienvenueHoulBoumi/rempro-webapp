@@ -12,6 +12,9 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
+import { logout } from "@/services/authenticate";
+import { redirect } from "next/navigation";
+
 export default function DashboardLayout({
   children,
 }: {
@@ -21,21 +24,20 @@ export default function DashboardLayout({
   const [isMobile, setIsMobile] = useState(false);
 
   const toggleSidebar = () => {
-    // Toggle sidebar only if not on mobile
     if (!isMobile) {
       setCollapsed(!collapsed);
     }
   };
 
   const handleLogout = () => {
-    console.log("User logged out");
-    window.location.href = "/login"; // Redirect to login page
+    logout();
+    redirect(`/`);
   };
 
   const checkScreenSize = () => {
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
-    
+
     // Close the sidebar if in mobile view
     if (mobile) {
       setCollapsed(true);
@@ -55,8 +57,8 @@ export default function DashboardLayout({
     <div className="flex h-screen">
       {/* Sidebar */}
       <div
-        className={`bg-base-200 text-base-content h-full p-2 transition-all duration-300 fixed top-0 left-0 flex flex-col justify-between ${
-          collapsed ? "w-20" : "w-64"
+        className={`bg-base-200 text-base-content h-full transition-all duration-300 fixed top-0 left-0 flex flex-col justify-between ${
+          collapsed ? "w-15" : "w-64"
         } z-50`}
       >
         {/* Upper section of the menu */}
@@ -64,7 +66,7 @@ export default function DashboardLayout({
           <li>
             <button className="btn btn-square" onClick={toggleSidebar}>
               {/* Icon to toggle the menu */}
-              <span className="mx-1">
+              <span>
                 {collapsed ? (
                   <FaChevronRight size={14} />
                 ) : (
@@ -76,16 +78,13 @@ export default function DashboardLayout({
           <li>
             <Link href="/dashboard/home" className="flex items-center">
               <FaHome size={14} />
-              {!collapsed && <span className="mx-1">Home</span>}
+              {!collapsed && <span>Home</span>}
             </Link>
           </li>
           <li>
-            <Link
-              href="/dashboard/progression"
-              className="flex items-center"
-            >
+            <Link href="/dashboard/progression" className="flex items-center">
               <FaChartLine size={14} />
-              {!collapsed && <span className="mx-1">Progression</span>}
+              {!collapsed && <span>Progression</span>}
             </Link>
           </li>
         </ul>
@@ -95,13 +94,13 @@ export default function DashboardLayout({
           <li>
             <Link href="/dashboard/settings" className="flex items-center">
               <FaCog size={14} />
-              {!collapsed && <span className="mx-1">Settings</span>}
+              {!collapsed && <span>Settings</span>}
             </Link>
           </li>
           <li>
             <Link href="/dashboard/profile" className="flex items-center">
               <FaUser size={14} />
-              {!collapsed && <span className="mx-1">Profile</span>}
+              {!collapsed && <span>Profile</span>}
             </Link>
           </li>
           <li>
@@ -110,7 +109,7 @@ export default function DashboardLayout({
               onClick={handleLogout}
             >
               <FaSignOutAlt size={14} />
-              {!collapsed && <span className="mx-1">Logout</span>}
+              {!collapsed && <span>Logout</span>}
             </button>
           </li>
         </ul>
@@ -118,7 +117,7 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div
-        className={`transition-all duration-300 flex-grow p-6 ${
+        className={`transition-all duration-300 flex-grow p-1 ${
           collapsed ? "ml-20" : "ml-64"
         }`}
       >
