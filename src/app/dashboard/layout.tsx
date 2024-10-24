@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   FaHome,
   FaChartLine,
@@ -12,8 +13,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-import { logout } from "@/services/authenticate";
-import { redirect } from "next/navigation";
+import { logout as logoutService } from "@/services/authenticate";
 
 export default function DashboardLayout({
   children,
@@ -22,6 +22,7 @@ export default function DashboardLayout({
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const router = useRouter();
 
   const toggleSidebar = () => {
     if (!isMobile) {
@@ -29,43 +30,38 @@ export default function DashboardLayout({
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    redirect(`/`);
-  };
-
   const checkScreenSize = () => {
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
-
-    // Close the sidebar if in mobile view
     if (mobile) {
       setCollapsed(true);
     }
   };
 
   useEffect(() => {
-    checkScreenSize(); // Check screen size on initial render
-    window.addEventListener("resize", checkScreenSize); // Add resize event listener
-
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
     return () => {
-      window.removeEventListener("resize", checkScreenSize); // Cleanup on unmount
+      window.removeEventListener("resize", checkScreenSize);
     };
   }, []);
 
+  const handleLogout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await logoutService();
+    router.push("/");
+  };
+
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
       <div
         className={`bg-base-200 text-base-content h-full transition-all duration-300 fixed top-0 left-0 flex flex-col justify-between ${
           collapsed ? "w-15" : "w-64"
         } z-50`}
       >
-        {/* Upper section of the menu */}
         <ul className="menu space-y-2">
           <li>
             <button className="btn btn-square" onClick={toggleSidebar}>
-              {/* Icon to toggle the menu */}
               <span>
                 {collapsed ? (
                   <FaChevronRight size={14} />
@@ -89,7 +85,6 @@ export default function DashboardLayout({
           </li>
         </ul>
 
-        {/* Bottom section of the menu */}
         <ul className="menu space-y-2 mb-4">
           <li>
             <Link href="/dashboard/settings" className="flex items-center">
@@ -104,21 +99,22 @@ export default function DashboardLayout({
             </Link>
           </li>
           <li>
-            <button
-              className="flex items-center text-red-500"
-              onClick={handleLogout}
-            >
-              <FaSignOutAlt size={14} />
-              {!collapsed && <span>Logout</span>}
-            </button>
+            <form onSubmit={handleLogout}>
+              <button
+                className="flex items-center text-red-500 space-x-2"
+                type="submit"
+              >
+                <FaSignOutAlt size={14} />
+                {!collapsed && <span>Logout</span>}
+              </button>
+            </form>
           </li>
         </ul>
       </div>
 
-      {/* Main content */}
       <div
         className={`transition-all duration-300 flex-grow p-1 ${
-          collapsed ? "ml-20" : "ml-64"
+          collapsed ? "ml-16" : "ml-64"
         }`}
       >
         {children}

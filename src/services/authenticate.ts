@@ -39,9 +39,5 @@ export async function authenticate(
 
 export async function logout() {
   const cookieStore = cookies();
-
-  cookieStore.set("token", "", {
-    path: "/",
-    maxAge: -1,
-  });
+  cookieStore.delete("token");
 }
