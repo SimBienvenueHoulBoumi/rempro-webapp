@@ -4,14 +4,12 @@ import { useState } from "react";
 import FormInput from "./FormInput";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthDto } from "@/types/authenticate";
-import toast from "react-hot-toast"; // Importer toast
-// import { useRouter } from "next/navigation"; // Pour redirection
+import toast from "react-hot-toast";
 
 const LoginForm: React.FC = () => {
   const { loading, login, error } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

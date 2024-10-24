@@ -26,7 +26,11 @@ export function useAuth(): UseAuthReturn {
 
     try {
       await authenticate(auth, type);
+      // Ajout d'un délai de 3 secondes avant de rediriger
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       router.push("/dashboard/home");
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "An error occurred");
