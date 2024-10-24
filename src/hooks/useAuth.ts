@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AuthDto } from "@/types/authenticate";
 import { authenticate } from "@/services/authenticate";
-import { useRouter } from "next/navigation"; // Pour la redirection côté client
+import { useRouter } from "next/navigation";
 
 interface UseAuthReturn {
   loading: boolean;
@@ -26,7 +26,6 @@ export function useAuth(): UseAuthReturn {
 
     try {
       await authenticate(auth, type);
-      // Ajout d'un délai de 3 secondes avant de rediriger
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
       router.push("/dashboard/home");

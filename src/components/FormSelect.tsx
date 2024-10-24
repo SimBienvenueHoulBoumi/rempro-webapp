@@ -1,29 +1,28 @@
-interface FormInputProps {
+import React from 'react';
+
+interface FormSelectProps {
   label: string;
-  type: string;
-  placeholder: string;
-  required?: boolean;
+  options: { value: string; label: string }[];
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  required?: boolean;
 }
 
-const FormInput: React.FC<FormInputProps> = ({ label, type, placeholder, required, value, onChange }) => {
+const FormSelect: React.FC<FormSelectProps> = ({ label, options, value, onChange, required }) => {
   return (
     <div className="form-control">
       <label className="label text-[13px] font-semibold text-gray-700">
         <span className="label-text">{label}</span>
       </label>
-      <input
-        type={type}
-        placeholder={placeholder}
+      <select
         value={value}
         onChange={onChange}
         className="
-          input 
+          select 
           bg-gray-800 
           focus:bg-gray-500
           text-white 
-          input-bordered 
+          select-bordered 
           w-full 
           p-2 
           rounded-lg 
@@ -33,12 +32,18 @@ const FormInput: React.FC<FormInputProps> = ({ label, type, placeholder, require
           focus:ring-blue-500 
           focus:ring-opacity-50 
           transition-all duration-300
-          text-[14px]  {/* Taille de texte identique à celle des icônes du Sidebar */}
+          text-[14px]  {/* Ajustement de la taille du texte */}
         "
         required={required}
-      />
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 };
 
-export default FormInput;
+export default FormSelect;
