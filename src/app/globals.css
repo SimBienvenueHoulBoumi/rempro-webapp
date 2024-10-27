@@ -22,14 +22,13 @@ body {
 }
 
 html, body {
-  min-width: 320px; /* Taille minimale pour smartphone */
   width: 100%;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
 }
 
-@media screen and (min-width: 320px) {
+@media screen and (min-width: 500px) {
   body {
     width: 100%;
   }

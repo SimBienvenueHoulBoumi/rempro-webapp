@@ -1,4 +1,5 @@
 export type FollowedDto = {
+  id?: number;
   name: string;
   levelType: string;
   levelNumber: number;

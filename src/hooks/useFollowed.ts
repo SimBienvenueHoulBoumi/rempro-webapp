@@ -66,7 +66,7 @@ export function useFollowed(): UseFollowedReturn {
   };
 
   // Supprimer un élément suivi
-  const removeFollowed = async (id: number): Promise<void | null> => {
+  const removeFollowed = async (id: number): Promise<void> => {
     setLoading(true);
     setError(null);
 
