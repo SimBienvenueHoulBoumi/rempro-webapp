@@ -1,164 +1,132 @@
-"use client"
+"use client";
 
-import { FollowedItem } from "@/types/followed";
 import React, { useState } from "react";
-
-interface ProgressionListProps {
-  progressions: FollowedItem[]; // Specify the prop type
-  removeFollowed: (id: number) => Promise<void | null>; // Ensure this matches your removeFollowed function
-}
+import { FollowedItem, ProgressionListProps } from "@/types/followed";
+import Modal from "./Modal";
 
 const ITEMS_PER_PAGE = 5;
 
-const ProgressionList: React.FC<ProgressionListProps> = ({
+export default function ProgressionList({
   progressions,
+  onEdit,
   removeFollowed,
-}) => {
+}: ProgressionListProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<FollowedItem | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [currentItem, setCurrentItem] = useState<FollowedItem | null>(null);
 
-  // Calculate total pages
   const totalPages = Math.ceil(progressions.length / ITEMS_PER_PAGE);
+  const currentItems = progressions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
-  // Get the current items to display
-  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
-  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-  const currentItems = progressions.slice(indexOfFirstItem, indexOfLastItem);
+  const goToNextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const goToPreviousPage = () =>
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
 
-  // Handle page change
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+  const handleShowDetails = (item: FollowedItem) => {
+    setCurrentItem(item);
+    setShowModal(true);
   };
 
-  // Open the confirmation modal
-  const openModal = (progression: FollowedItem) => {
-    setItemToDelete(progression);
-    setIsModalOpen(true);
-  };
-
-  // Close the confirmation modal
-  const closeModal = () => {
-    setItemToDelete(null);
-    setIsModalOpen(false);
-  };
-
-  // Handle delete action
-  const handleDelete = async () => {
-    if (itemToDelete) {
-      try {
-        await removeFollowed(itemToDelete.id);
-        closeModal(); // Close the modal after deletion
-      } catch (error) {
-        setErrorMessage("Erreur lors de la suppression de l'élément. Veuillez réessayer.");
-        console.error("Delete error:", error);
-      }
-    }
+  // Formate une date pour un affichage plus clair en anglais
+  const FORMAT_DATE = (dateString: string) => {
+    const date = new Date(dateString);
+    return (
+      date.toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }) +
+      `, ` +
+      date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
+    );
   };
 
   return (
-    <div className="w-full overflow-x-auto">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Progression list</h2>
-      {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>} {/* Error message display */}
-
-      <table className="min-w-full bg-white border border-gray-300 rounded shadow-lg">
-        <thead>
-          <tr className="bg-gray-100 text-gray-700 uppercase text-sm leading-normal">
-            <th className="py-3 px-6 border-b border-gray-300 text-left">Name</th>
-            <th className="py-3 px-6 border-b border-gray-300 text-left">Type</th>
-            <th className="py-3 px-6 border-b border-gray-300 text-left">Level</th>
-            <th className="py-3 px-6 border-b border-gray-300 text-left">Episode</th>
-            <th className="py-3 px-6 border-b border-gray-300 text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="text-gray-600 text-sm font-light">
-          {currentItems.map((progression) => (
-            <tr key={progression.id} className="hover:bg-gray-100 transition">
-              <td className="py-3 px-6 border-b border-gray-300">{progression.name}</td>
-              <td className="py-3 px-6 border-b border-gray-300">{progression.levelType}</td>
-              <td className="py-3 px-6 border-b border-gray-300">{progression.levelNumber}</td>
-              <td className="py-3 px-6 border-b border-gray-300">{progression.episodeNumber}</td>
-              <td className="py-3 px-6 border-b border-gray-300 text-center">
+    <div>
+      <ul>
+        {currentItems.map((item) => (
+          <li key={item.id} className="my-1 bg-white p-1 rounded-sm">
+            <div className="flex justify-between items-center">
+              <span>{item.name}</span>
+              <div className="space-x-2 text-xs">
                 <button
-                  onClick={() => openModal(progression)}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                  onClick={() => onEdit(item)}
+                  className="p-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                 >
-                  delete
+                  Update
                 </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Modal for Confirmation */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg">
-            <h3 className="text-lg font-bold mb-4">Confirmer la suppression</h3>
-            <p>Êtes-vous sûr de vouloir supprimer « {itemToDelete?.name} » ?</p>
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={closeModal}
-                className="mr-2 bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 transition"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleDelete}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-              >
-                Supprimer
-              </button>
+                <button
+                  onClick={() => handleShowDetails(item)}
+                  className="p-1 bg-green-500 text-white rounded hover:bg-green-600"
+                >
+                  Details
+                </button>
+                <button
+                  onClick={() => removeFollowed(item.id)}
+                  className="p-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </li>
+        ))}
+      </ul>
 
-      {/* Pagination Controls */}
       <div className="flex justify-center mt-4">
         <button
-          onClick={() => handlePageChange(currentPage - 1)}
+          onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          className={`mr-2 px-4 py-2 border rounded-lg ${
-            currentPage === 1
-              ? "bg-gray-300 cursor-not-allowed"
-              : "bg-blue-500 text-white hover:bg-blue-600 transition"
-          }`}
+          className="p-1 w-16 mx-2 bg-gray-500 text-white rounded disabled:bg-gray-300"
         >
-          Précédent
+          Previous
         </button>
-
-        {/* Page numbers */}
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => handlePageChange(index + 1)}
-            className={`mx-1 px-4 py-2 border rounded-lg ${
-              currentPage === index + 1
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 hover:bg-gray-300 transition"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
-
+        <span className="p-1">{`Page ${currentPage} of ${totalPages}`}</span>
         <button
-          onClick={() => handlePageChange(currentPage + 1)}
+          onClick={goToNextPage}
           disabled={currentPage === totalPages}
-          className={`ml-2 px-4 py-2 border rounded-lg ${
-            currentPage === totalPages
-              ? "bg-gray-300 cursor-not-allowed"
-              : "bg-blue-500 text-white hover:bg-blue-600 transition"
-          }`}
+          className="p-1 w-16 mx-2 bg-gray-500 text-white rounded disabled:bg-gray-300"
         >
-          Suivant
+          Next
         </button>
       </div>
+
+      {/* Modal to display details */}
+      {showModal && currentItem && (
+        <Modal showModal={showModal} closeModal={() => setShowModal(false)}>
+          <h2 className="text-lg font-semibold mb-4">
+            Details of {currentItem.name}
+          </h2>
+
+          <p>
+            <strong>Type:</strong> {currentItem.levelType}
+          </p>
+          <p>
+            <strong>Level:</strong> {currentItem.levelNumber}
+          </p>
+          <p>
+            <strong>Episode:</strong> {currentItem.episodeNumber}
+          </p>
+
+          <div className="mt-4">
+            <h3 className="font-semibold">Creation Details:</h3>
+            <p>
+              <strong>Created on:</strong> {FORMAT_DATE(currentItem.createdAt)}
+            </p>
+            <p>
+              <strong>Updated on:</strong> {FORMAT_DATE(currentItem.updatedAt)}
+            </p>
+          </div>
+        </Modal>
+      )}
     </div>
   );
-};
-
-export default ProgressionList;
+}

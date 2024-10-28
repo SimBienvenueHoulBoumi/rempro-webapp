@@ -41,3 +41,10 @@ export interface UseFollowedReturn {
   modifyFollowed: (id: number, follow: FollowedDto) => Promise<void | null>;
   removeFollowed: (id: number) => Promise<void | null>;
 }
+
+
+export interface ProgressionListProps {
+  progressions: FollowedItem[];
+  onEdit: (followed: FollowedDto) => void;
+  removeFollowed: (id: number) => void;
+}

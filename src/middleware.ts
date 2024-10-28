@@ -14,7 +14,6 @@ interface DecodedToken {
 export function middleware(request: NextRequest) {
   const cookieStore = cookies();
   const token = cookieStore.get("token")?.value;
-
   const currentPath = request.nextUrl.pathname;
 
   // Si un token existe, vérifier sa validité
@@ -23,42 +22,34 @@ export function middleware(request: NextRequest) {
       const decoded: DecodedToken = jwtDecode(token);
       const currentTime = Math.floor(Date.now() / 1000); // Temps actuel en secondes
 
-      // Si le token a expiré, rediriger vers la page d'accueil
+      // Si le token a expiré, rediriger vers la page de login
       if (decoded.exp < currentTime) {
         cookieStore.set("token", "", {
           path: "/",
           maxAge: -1, // Expire immédiatement
         });
-        return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/login", request.url)); // Rediriger vers login
       }
 
-      // Si l'utilisateur est connecté et essaie d'accéder à une page de login/register, le rediriger vers /dashboard/home
-      if (
-        ["/login", "/register", "/"].includes(currentPath) &&
-        currentPath !== "/dashboard/home"
-      ) {
+      // Rediriger les utilisateurs connectés qui tentent d'accéder à /login ou /register
+      if (["/login", "/register"].includes(currentPath)) {
         return NextResponse.redirect(new URL("/dashboard/home", request.url));
-      }
-
-      // Si l'utilisateur est déjà sur /dashboard/home, ne pas rediriger
-      if (currentPath === "/dashboard/home") {
-        return NextResponse.next();
       }
 
       return NextResponse.next();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      // Si le décodage du token échoue, rediriger vers la page d'accueil
-      return NextResponse.redirect(new URL("/", request.url));
+      // En cas d'erreur de décodage, rediriger vers login
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
   // Si l'utilisateur n'est pas connecté et essaie d'accéder à une page protégée
   if (currentPath.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Si l'utilisateur n'est pas connecté et sur une page publique, ne pas rediriger
+  // Laisser passer les pages publiques
   return NextResponse.next();
 }
 

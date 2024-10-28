@@ -3,61 +3,71 @@
 import React, { useState } from "react";
 import { FollowedDto } from "@/types/followed";
 import ProgressionForm from "@/components/ProgressionForm";
-import { useFollowed } from "@/hooks/useFollowed"; // Ensure the import path is correct
+import { useFollowed } from "@/hooks/useFollowed";
 import ProgressionList from "@/components/ProgressionList";
 
 export default function FollowedList() {
-  const { loading, error, followedList, addFollowed, removeFollowed } = useFollowed();
+  const {
+    loading,
+    error,
+    followedList,
+    addFollowed,
+    modifyFollowed,
+    removeFollowed,
+  } = useFollowed();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingFollowed, setEditingFollowed] = useState<FollowedDto | null>(
+    null
+  );
 
-  // Function to handle the submission of the form
   const handleCreateFollowed = async (progression: FollowedDto) => {
-    try {
+    if (editingFollowed) {
+      await modifyFollowed(editingFollowed.id!, progression);
+    } else {
       await addFollowed(progression);
-      setIsModalOpen(false); // Close the modal after successful submission
-    } catch (err) {
-      console.error("Failed to create followed item:", err);
-      // Optionally, you can set an error state here to display to the user
     }
+    setIsModalOpen(false);
+    setEditingFollowed(null);
   };
 
-  // Functions to open and close the modal
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const handleEditFollowed = (followed: FollowedDto) => {
+    setEditingFollowed(followed);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Followed Items</h1>
-
-      {/* Button to open the modal */}
       <button
-        onClick={openModal}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4 hover:bg-blue-600 transition"
+        onClick={() => setIsModalOpen(true)}
+        className="bg-blue-500 text-white px-4 py-2 rounded mb-4 hover:bg-blue-600 transition justify-center"
       >
         Create Followed Item
       </button>
 
-      {/* Modal for the Progression Form */}
       {isModalOpen && (
-        <div>
-          <ProgressionForm
-            onSubmit={handleCreateFollowed}
-            onClose={closeModal}
-          />
+        <ProgressionForm
+          onSubmit={handleCreateFollowed}
+          onClose={() => setIsModalOpen(false)}
+          followedItem={editingFollowed || undefined}
+        />
+      )}
+
+      {loading && (
+        <div className="flex items-center justify-center h-24">
+          <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
         </div>
       )}
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-red-500 text-center">{error}</p>}
 
-      {/* Use ProgressionList instead of a regular list */}
       {followedList && followedList.length > 0 ? (
         <ProgressionList
           progressions={followedList}
-          removeFollowed={removeFollowed} // Pass down the remove function
+          onEdit={handleEditFollowed}
+          removeFollowed={removeFollowed}
         />
       ) : (
-        <p className="mt-4">No followed items found.</p>
+        <p className="mt-4 text-center">No followed items found.</p>
       )}
     </div>
   );
