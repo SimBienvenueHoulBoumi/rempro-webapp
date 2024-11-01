@@ -16,6 +16,9 @@ export function middleware(request: NextRequest) {
   const token = cookieStore.get("token")?.value;
   const currentPath = request.nextUrl.pathname;
 
+  // Page de login pour éviter une redirection cyclique
+  const loginPage = "/";
+
   // Si un token existe, vérifier sa validité
   if (token) {
     try {
@@ -28,7 +31,11 @@ export function middleware(request: NextRequest) {
           path: "/",
           maxAge: -1, // Expire immédiatement
         });
-        return NextResponse.redirect(new URL("/login", request.url)); // Rediriger vers login
+
+        // Éviter les redirections cycliques si l’utilisateur est déjà sur la page de login
+        if (currentPath !== loginPage) {
+          return NextResponse.redirect(new URL(loginPage, request.url));
+        }
       }
 
       // Rediriger les utilisateurs connectés qui tentent d'accéder à /login ou /register
@@ -39,14 +46,15 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      // En cas d'erreur de décodage, rediriger vers login
-      return NextResponse.redirect(new URL("/login", request.url));
+      if (currentPath !== loginPage) {
+        return NextResponse.redirect(new URL(loginPage, request.url));
+      }
     }
-  }
-
-  // Si l'utilisateur n'est pas connecté et essaie d'accéder à une page protégée
-  if (currentPath.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  } else {
+    // Si l'utilisateur n'est pas connecté et essaie d'accéder à une page protégée
+    if (currentPath.startsWith("/dashboard") && currentPath !== loginPage) {
+      return NextResponse.redirect(new URL(loginPage, request.url));
+    }
   }
 
   // Laisser passer les pages publiques
