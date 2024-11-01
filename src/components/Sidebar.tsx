@@ -11,7 +11,7 @@ import {
   FaChevronRight,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { logout as logoutService } from "@/services/authenticate";
 
 interface SidebarProps {
@@ -21,12 +21,17 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
     await logoutService();
     router.push("/");
   };
+
+  // Fonction pour déterminer si le lien est actif
+  const isActive = (route: string) =>
+    pathname === route ? "bg-gray-300" : "hover:bg-gray-300";
 
   return (
     <div
@@ -39,9 +44,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
           <button className="btn btn-square" onClick={toggleSidebar}>
             <span>
               {collapsed ? (
-                <FaChevronRight size={14} />
+                <FaChevronRight size={16} /> // Augmenté pour le bouton
               ) : (
-                <FaChevronLeft size={14} />
+                <FaChevronLeft size={16} /> // Augmenté pour le bouton
               )}
             </span>
           </button>
@@ -49,27 +54,49 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
         <li>
           <Link
             href="/dashboard/home"
-            className={`sidebar-button hover:bg-gray-200 ${
+            className={`sidebar-button ${isActive("/dashboard/home")} ${
               collapsed ? "text-center" : ""
-            }`}
+            } flex items-center p-2 rounded`}
           >
-            <FaHome size={14} />
-            <span className={`duration-300 ${collapsed ? "hidden" : "block"}`}>
-              Home
-            </span>
+            {collapsed ? (
+              <span className="flex justify-center items-center w-full">
+                <FaHome size={16} /> {/* Taille uniforme pour le menu replié */}
+              </span>
+            ) : (
+              <>
+                <FaHome size={16} /> {/* Taille uniforme pour le menu étendu */}
+                <span
+                  className={`duration-300 ${collapsed ? "hidden" : "block"}`}
+                >
+                  Home
+                </span>
+              </>
+            )}
           </Link>
         </li>
         <li>
           <Link
             href="/dashboard/progression"
-            className={`sidebar-button hover:bg-gray-200 ${
+            className={`sidebar-button ${isActive("/dashboard/progression")} ${
               collapsed ? "text-center" : ""
-            }`}
+            } flex items-center p-2 rounded`}
           >
-            <FaChartLine size={14} />
-            <span className={`duration-300 ${collapsed ? "hidden" : "block"}`}>
-              Progression
-            </span>
+            {collapsed ? (
+              <span className="flex justify-center items-center w-full">
+                <FaChartLine size={16} />{" "}
+                {/* Taille uniforme pour le menu replié */}
+              </span>
+            ) : (
+              <>
+                <FaChartLine size={16} />{" "}
+                {/* Taille uniforme pour le menu étendu */}
+                <span
+                  className={`duration-300 ${collapsed ? "hidden" : "block"}`}
+                >
+                  Progression
+                </span>
+              </>
+            )}
           </Link>
         </li>
       </ul>
@@ -78,35 +105,56 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
         <li>
           <Link
             href="/dashboard/settings"
-            className={`sidebar-button hover:bg-gray-200 ${
+            className={`sidebar-button ${isActive("/dashboard/settings")} ${
               collapsed ? "text-center" : ""
-            }`}
+            } flex items-center p-2 rounded`}
           >
-            <FaCog size={14} />
-            <span className={`duration-300 ${collapsed ? "hidden" : "block"}`}>
-              Settings
-            </span>
+            {collapsed ? (
+              <span className="flex justify-center items-center w-full">
+                <FaCog size={16} /> {/* Taille uniforme pour le menu replié */}
+              </span>
+            ) : (
+              <>
+                <FaCog size={16} /> {/* Taille uniforme pour le menu étendu */}
+                <span
+                  className={`duration-300 ${collapsed ? "hidden" : "block"}`}
+                >
+                  Settings
+                </span>
+              </>
+            )}
           </Link>
         </li>
         <li>
           <Link
             href="/dashboard/profile"
-            className={`sidebar-button hover:bg-gray-200 ${
+            className={`sidebar-button ${isActive("/dashboard/profile")} ${
               collapsed ? "text-center" : ""
-            }`}
+            } flex items-center p-2 rounded`}
           >
-            <FaUser size={14} />
-            <span className={`duration-300 ${collapsed ? "hidden" : "block"}`}>
-              Profile
-            </span>
+            {collapsed ? (
+              <span className="flex justify-center items-center w-full">
+                <FaUser size={16} /> {/* Taille uniforme pour le menu replié */}
+              </span>
+            ) : (
+              <>
+                <FaUser size={16} /> {/* Taille uniforme pour le menu étendu */}
+                <span
+                  className={`duration-300 ${collapsed ? "hidden" : "block"}`}
+                >
+                  Profile
+                </span>
+              </>
+            )}
           </Link>
         </li>
         <li>
           <button
             onClick={handleLogout}
-            className="sidebar-button hover:bg-red-400 hover:text-black flex items-center justify-start w-full"
+            className="sidebar-button bg-red-400 hover:bg-red-300 text-black flex items-center justify-center w-full p-2 rounded"
           >
-            <FaSignOutAlt size={14} />
+            <FaSignOutAlt size={16} />{" "}
+            {/* Taille uniforme pour l'icône de déconnexion */}
             <span className={`duration-300 ${collapsed ? "hidden" : "block"}`}>
               Logout
             </span>

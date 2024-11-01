@@ -4,12 +4,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
-
-interface DecodedToken {
-  sub: string;
-  iat: number;
-  exp: number;
-}
+import { DecodedToken } from "./types/authenticate";
 
 export function middleware(request: NextRequest) {
   const cookieStore = cookies();
