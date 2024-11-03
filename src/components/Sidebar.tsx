@@ -29,7 +29,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
     router.push("/");
   };
 
-  // Fonction pour déterminer si le lien est actif
   const isActive = (route: string) =>
     pathname === route ? "bg-gray-300" : "hover:bg-gray-300";
 
@@ -44,9 +43,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
           <button className="btn btn-square" onClick={toggleSidebar}>
             <span>
               {collapsed ? (
-                <FaChevronRight size={16} /> // Augmenté pour le bouton
+                <FaChevronRight size={16} />
               ) : (
-                <FaChevronLeft size={16} /> // Augmenté pour le bouton
+                <FaChevronLeft size={16} />
               )}
             </span>
           </button>
@@ -60,11 +59,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
           >
             {collapsed ? (
               <span className="flex justify-center items-center w-full">
-                <FaHome size={16} /> {/* Taille uniforme pour le menu replié */}
+                <FaHome size={16} />
               </span>
             ) : (
               <>
-                <FaHome size={16} /> {/* Taille uniforme pour le menu étendu */}
+                <FaHome size={16} />
                 <span
                   className={`duration-300 ${collapsed ? "hidden" : "block"}`}
                 >
@@ -84,12 +83,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
             {collapsed ? (
               <span className="flex justify-center items-center w-full">
                 <FaChartLine size={16} />{" "}
-                {/* Taille uniforme pour le menu replié */}
               </span>
             ) : (
               <>
                 <FaChartLine size={16} />{" "}
-                {/* Taille uniforme pour le menu étendu */}
                 <span
                   className={`duration-300 ${collapsed ? "hidden" : "block"}`}
                 >
@@ -111,11 +108,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
           >
             {collapsed ? (
               <span className="flex justify-center items-center w-full">
-                <FaCog size={16} /> {/* Taille uniforme pour le menu replié */}
+                <FaCog size={16} />
               </span>
             ) : (
               <>
-                <FaCog size={16} /> {/* Taille uniforme pour le menu étendu */}
+                <FaCog size={16} />
                 <span
                   className={`duration-300 ${collapsed ? "hidden" : "block"}`}
                 >
