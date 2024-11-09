@@ -7,7 +7,7 @@ import { AuthDto } from "@/types/authenticate";
 import toast from "react-hot-toast";
 
 const LoginForm: React.FC = () => {
-  const { loading, login, error } = useAuth();
+  const { loading, login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -30,7 +30,6 @@ const LoginForm: React.FC = () => {
   return (
     <div className="card w-full bg-white/70 shadow-xl rounded-2xl relative backdrop-blur-md flex flex-col p-6">
       <form className="card-body space-y-5" onSubmit={handleSubmit}>
-        {error && <div className="text-red-500">{error}</div>}
         <FormInput
           label="Email"
           type="email"

@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 export async function authenticate(
   auth: AuthDto,
   type: "login" | "register"
-): Promise<Token> {
+): Promise<void> {
   const endpoint = type === "login" ? "/auth/login" : "/auth/register";
 
   try {
@@ -21,32 +21,27 @@ export async function authenticate(
       }
     );
 
-    // Vérification de la réponse
     if (!res.ok) {
-      throw new Error(`Failed to ${type}. Please try again.`);
+      throw new Error("Authentication failed");
     }
 
-    const token: Token = await res.json();
+    const token_value = (await res.json()) as Token;
 
     const cookieStore = cookies();
-    cookieStore.set("token", token.token, {
+    cookieStore.set("token", token_value.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
     });
-
-    return token;
   } catch (error) {
-    // Gérer l'erreur (log, relancer ou autre)
     console.error("Authentication error:", error);
-    throw error; // Relancer l'erreur pour que l'appelant puisse la gérer
+    throw error;
   }
 }
 
 export async function logout() {
-  const cookieStore = cookies();
-  cookieStore.delete("token");
+  cookies().delete("token");
 }
 
 export async function getProfile() {
