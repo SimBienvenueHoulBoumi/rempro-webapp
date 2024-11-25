@@ -31,81 +31,80 @@ export default function ProgressionList({
     setShowModal(true);
   };
 
-  // Formate une date pour un affichage plus clair en anglais
   const FORMAT_DATE = (dateString: string) => {
     const date = new Date(dateString);
-    return (
-      date.toLocaleDateString("en-US", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }) +
-      `, ` +
-      date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      })
-    );
+    return date.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   return (
-    <div>
-      <ul>
+    <div className="container mx-auto text-xs">
+      <ul className="bg-white shadow-md rounded-md divide-y divide-gray-200">
         {currentItems.map((item) => (
-          <li key={item.id} className="my-1 bg-white p-1 rounded-sm">
-            <div className="flex justify-between items-center">
-              <span>{item.name}</span>
-              <div className="space-x-2 text-xs">
-                <button
-                  onClick={() => onEdit(item)}
-                  className="p-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                >
-                  Update
-                </button>
-                <button
-                  onClick={() => handleShowDetails(item)}
-                  className="p-1 bg-green-500 text-white rounded hover:bg-green-600"
-                >
-                  Details
-                </button>
-                <button
-                  onClick={() => removeFollowed(item.id)}
-                  className="p-1 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </div>
+          <li
+            key={item.id}
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2"
+          >
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold text-gray-700">
+                {item.name}
+              </h2>
+              <p className="text-sm text-gray-500">
+                Level: {item.levelNumber} | Episode: {item.episodeNumber}
+              </p>
+            </div>
+            <div className="mt-2 sm:mt-0 flex space-x-2">
+              <button
+                onClick={() => onEdit(item)}
+                className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+              >
+                Update
+              </button>
+              <button
+                onClick={() => handleShowDetails(item)}
+                className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Details
+              </button>
+              <button
+                onClick={() => removeFollowed(item.id)}
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
             </div>
           </li>
         ))}
       </ul>
 
-      <div className="flex justify-center mt-4">
+      {/* Pagination */}
+      <div className="flex justify-center mt-6">
         <button
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          className="p-1 w-16 mx-2 bg-gray-500 text-white rounded disabled:bg-gray-300"
+          className="px-4 py-2 bg-gray-500 text-white rounded disabled:bg-gray-300 mx-2"
         >
           Previous
         </button>
-        <span className="p-1">{`Page ${currentPage} of ${totalPages}`}</span>
+        <span className="px-4 py-2">{`Page ${currentPage} of ${totalPages}`}</span>
         <button
           onClick={goToNextPage}
           disabled={currentPage === totalPages}
-          className="p-1 w-16 mx-2 bg-gray-500 text-white rounded disabled:bg-gray-300"
+          className="px-4 py-2 bg-gray-500 text-white rounded disabled:bg-gray-300 mx-2"
         >
           Next
         </button>
       </div>
 
-      {/* Modal to display details */}
+      {/* Modal */}
       {showModal && currentItem && (
         <Modal showModal={showModal} closeModal={() => setShowModal(false)}>
-          <h2 className="text-lg font-semibold mb-4">
+          <h2 className="text-xl font-bold mb-4">
             Details of {currentItem.name}
           </h2>
-
           <p>
             <strong>Type:</strong> {currentItem.levelType}
           </p>

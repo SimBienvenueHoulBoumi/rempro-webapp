@@ -34,11 +34,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
 
   return (
     <div
-      className={`bg-base-200 text-base-content h-full transition-all duration-300 ease-in-out fixed top-0 left-0 flex flex-col justify-between ${
+      className={`bg-white text-base-content h-full transition-all duration-300 ease-in-out fixed top-0 left-0 flex flex-col justify-between ${
         collapsed ? "w-16" : "w-64"
       } z-50 overflow-hidden`}
     >
-      <ul className="menu space-y-2">
+      <ul className="menu space-y-2 bg-white">
         <li>
           <button className="btn btn-square" onClick={toggleSidebar}>
             <span>
